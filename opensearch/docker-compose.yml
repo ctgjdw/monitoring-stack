@@ -25,6 +25,12 @@ services:
             - 9277:9600 # required for Performance Analyzer
         networks:
             - 'host-net'
+        command:
+            - /bin/bash
+            - -c
+            - |
+                ./bin/opensearch-plugin install https://github.com/aiven/prometheus-exporter-plugin-for-opensearch/releases/download/2.11.1.0/prometheus-exporter-2.11.1.0.zip
+                /usr/share/opensearch/opensearch-docker-entrypoint.sh opensearch
         # logging:
         #     driver: fluentd
         #     options:
