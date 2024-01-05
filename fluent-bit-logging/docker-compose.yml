@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+    fluentbit:
+        image: fluent/fluent-bit
+        networks:
+            - host-net
+        ports:
+            - '24224:24224'
+            - '24224:24224/udp'
+        volumes:
+            - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+
+networks:
+    host-net:
+        external: true

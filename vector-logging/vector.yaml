@@ -1,0 +1,44 @@
+sources:
+  docker_es:
+    type: docker_logs
+    docker_host: /var/run/docker.sock
+    include_images:
+      - opensearchproject/opensearch
+
+transforms:
+  clean_docker_labels:
+    inputs:
+      - "docker_es"
+    type: "remap"
+    source: |
+      .label."com.docker.compose.project.name" = del(.label."com.docker.compose.project")
+  parse_log4j2:
+    inputs:
+      - "clean_docker_labels"
+    type: "remap"
+    source: |
+      parsed = parse_grok!(.message,"\\[%{TIMESTAMP_ISO8601:time}\\]\\[%{LOGLEVEL:loglevel}\\s*\\]\\[%{JAVACLASS:class}\\s*\\]\\s?%{GREEDYDATA:cleaned_message}")
+      . = merge(., parsed)
+
+sinks:
+  # out:
+  #   inputs:
+  #     - "parse_log4j2"
+  #   type: "console"
+  #   encoding:
+  #     codec: "json"
+  es:
+    inputs:
+      - "parse_log4j2"
+    type: "elasticsearch"
+    endpoints:
+      - https://opensearch:9200
+    auth:
+      password: admin
+      strategy: basic
+      user: admin
+    tls:
+      verify_certificate: false
+    healthcheck:
+      enabled: false
+    api_version: v7
