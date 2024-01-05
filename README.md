@@ -17,4 +17,4 @@ There are 2 different log collectors here
     - uncomment `services.opensearch.logging` in `docker-compose.yml` if using `fluent-bit/d`
     - `cd ./opensearch && docker compose up -d`
 1. [Vector](./vector-logging/setup.md)
-1. [Fluent-bit](./fluent-bit/setup.md)
+1. [Fluent-bit](./fluent-bit-logging/setup.md)
